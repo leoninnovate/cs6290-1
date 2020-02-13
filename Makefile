@@ -5,3 +5,6 @@ sesc.opt:
 
 sesc.debug:
 	scons build/SMP_BOOKSIM/sesc.debug
+
+clean:
+	rm -r build
