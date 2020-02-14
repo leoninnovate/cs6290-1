@@ -44,6 +44,8 @@ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include "EnergyMgr.h"
 #include "SCTable.h"
 
+#include <map>
+
 #define RAP_T_NT_ONLY   1
 
 enum PredType {
@@ -63,11 +65,48 @@ public:
         }
     };
 
+    /************* Haoyu Mod starts ********************/
+    //for counting hit and miss of 1 repeating static branch inst
+    struct SingleInstStats {
+        long long nHit  =0;
+        long long nMiss = 0;
+
+        void Update(const bool isHit)
+        {
+            if(isHit)
+                nHit++;
+            else
+            {
+                nMiss++;
+            }
+        }
+
+        SingleInstStats& operator=(const SingleInstStats& rhs){
+            nHit = rhs.nHit;
+            nMiss = rhs.nMiss;
+        }
+
+        long long TotalNum() const {
+            return (nHit+nMiss);
+        }
+    };
+
+    struct OverallStats{
+        long long nHit = 0;
+        long long nMiss= 0;
+        long long nTotal=0;
+    };
+    
+    typedef std::map<InstID, SingleInstStats*> StatsForInsts;
+    /************* Haoyu Mod ends **********************/
+
 protected:
     const int32_t id;
 
     GStatsCntr nHit;  // N.B. predictors should not update these counters directly
     GStatsCntr nMiss; // in their predict() function.
+
+    StatsForInsts statsForInsts;//to count hit or miss for each branch inst
 
     GStatsEnergy *bpredEnergy;
     int32_t bpred4Cycle;
@@ -104,6 +143,9 @@ public:
 
     virtual void switchIn(Pid_t pid)  = 0;
     virtual void switchOut(Pid_t pid) = 0;
+
+    void UpdateStats(const InstID id, const bool isHit, StatsForInsts& stats);
+    void PrintStats();//print stats for inst wise hit/miss
 };
 
 
@@ -417,12 +459,15 @@ public:
         nBranches.cinc(doUpdate);
         nTaken.cinc(inst->calcNextInstID() != oracleID);
 
+        //The RAS predictor can either say "NoPrediction",
+        //which means that the instruction is not a return, or it will tell whether it predicted the return correctly
         PredType p= ras.doPredict(inst, oracleID, doUpdate);
-        if( p != NoPrediction ) {
+        if( p != NoPrediction ) {//true if inst is return
             nMiss.cinc(p != CorrectPrediction && doUpdate);
             return p;
         }
 
+        //if inst is NOT return, use BPred, can be hybrid, oracle, NotTaken....
         p = pred->doPredict(inst, oracleID, doUpdate);
 
         nMiss.cinc(p != CorrectPrediction && doUpdate);

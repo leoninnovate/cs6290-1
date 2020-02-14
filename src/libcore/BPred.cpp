@@ -69,6 +69,70 @@ BPred::~BPred()
 {
     if(bpredEnergy)
         delete bpredEnergy;
+    
+    //proj 1 haoyu added
+    if(!statsForInsts.empty()){
+        for(StatsForInsts::iterator itr = statsForInsts.begin(); itr != statsForInsts.end();++itr){
+            delete itr->second;
+            itr->second = nullptr;
+        }
+    }
+}
+
+//Proj1. call in each derived BPred instance, such as Hybrid/NotTaken..
+void BPred::UpdateStats(const InstID id, const bool isHit, StatsForInsts& stats)
+{
+    StatsForInsts::iterator itr = stats.find(id);
+    if(itr == stats.end()){//id not recorded yet
+        stats[id] = new SingleInstStats();
+        stats[id]->Update(isHit);
+    }
+    else{
+        itr->second->Update(isHit);
+    }
+}
+
+//Proj1. conclude overall stats from inst wise hit/miss and display
+void BPred::PrintStats()
+{
+    if(statsForInsts.empty()){
+        printf("statsForInsts empty");
+        return;
+    }
+    
+    OverallStats n10, n100, n1000, n1000plus;
+    StatsForInsts::const_iterator itr = statsForInsts.begin();
+    for(;itr != statsForInsts.end(); ++itr){
+        if(itr->second->TotalNum() < 10){
+            n10.nHit  += itr->second->nHit;
+            n10.nMiss += itr->second->nMiss;
+            n10.nTotal += itr->second->TotalNum();
+        }
+        else if(itr->second->TotalNum() < 100) {
+            n100.nHit  += itr->second->nHit;
+            n100.nMiss += itr->second->nMiss;
+            n100.nTotal += itr->second->TotalNum();
+        }
+        else if(itr->second->TotalNum() < 1000) {
+            n1000.nHit  += itr->second->nHit;
+            n1000.nMiss += itr->second->nMiss;
+            n1000.nTotal += itr->second->TotalNum();
+        }
+        else {
+            n1000plus.nHit  += itr->second->nHit;
+            n1000plus.nMiss += itr->second->nMiss;
+            n1000plus.nTotal += itr->second->TotalNum();
+        }
+    }
+
+    printf("\nStats for branches that repeated under 10   times: total %d, hit %d, miss %d.",
+            n10.nTotal,n10.nHit,n10.nMiss);
+    printf("\nStats for branches that repeated under 100  times: total %d, hit %d, miss %d.",
+            n100.nTotal,n100.nHit,n100.nMiss);
+    printf("\nStats for branches that repeated under 1000 times: total %d, hit %d, miss %d.",
+            n1000.nTotal,n1000.nHit,n1000.nMiss);
+    printf("\nStats for branches that repeated over  1000 times: total %d, hit %d, miss %d.",
+            n1000plus.nTotal,n1000plus.nHit,n1000plus.nMiss);
 }
 
 /*****************************************
@@ -321,6 +385,20 @@ PredType  BPNotTaken::predict(const Instruction * inst, InstID oracleID, bool do
 {
     bpredEnergy->inc();
 
+    //proj 1 added by haoyu
+    InstID id = inst->currentID();
+    if(inst->isBranchTaken())//unconditional
+        UpdateStats(id,false,statsForInsts);
+    else{//other
+        if(inst->calcNextInstID() == oracleID){
+            UpdateStats(id,true,statsForInsts);
+        }
+        else{
+            UpdateStats(id,false,statsForInsts);
+        }
+    }
+    //proj 1 end
+
     return inst->calcNextInstID() == oracleID ? CorrectPrediction : MissPrediction;
 }
 
@@ -544,9 +622,12 @@ PredType BPHybrid::predict(const Instruction *inst, InstID oracleID, bool doUpda
 {
     bpredEnergy->inc();
 
-    if( inst->isBranchTaken() )
-        return btb.predict(inst, oracleID, doUpdate);
+    InstID id = inst->currentID();
 
+    if( inst->isBranchTaken() ) {
+        UpdateStats(id,true,statsForInsts);//proj1. unconditional. count as correct.
+        return btb.predict(inst, oracleID, doUpdate);
+    }
     bool taken = (inst->calcNextInstID() != oracleID);
     HistoryType iID     = calcInstID(inst);
     HistoryType l2Index = ghr;
@@ -583,6 +664,15 @@ PredType BPHybrid::predict(const Instruction *inst, InstID oracleID, bool doUpda
     }
 
     bool ptaken = metaOut ? localTaken : globalTaken;
+
+    //proj1 added by haoyu
+    if (taken != ptaken){//direct mis prediction
+        UpdateStats(id,false,statsForInsts);
+    }
+    else {
+        UpdateStats(id,true,statsForInsts);
+    }
+    //proj1 end
 
     if (taken != ptaken) {
         if (doUpdate)
@@ -1223,6 +1313,8 @@ BPredictor::BPredictor(int32_t i, int32_t fetchWidth, const char *sec, BPredicto
 BPredictor::~BPredictor()
 {
     dump(section);
+
+    pred->PrintStats();//print to terminal
 
     if (!SMTcopy)
         delete pred;
