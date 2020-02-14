@@ -95,11 +95,12 @@ public:
     };
 
     struct OverallStats{
+        long long nStaticInst;
         long long nHit;
         long long nMiss;
         long long nTotal;
 
-        OverallStats():nHit(0),nMiss(0),nTotal(0) {}
+        OverallStats():nStaticInst(0),nHit(0),nMiss(0),nTotal(0) {}
     };
     
     typedef std::map<InstID, SingleInstStats*> StatsForInsts;

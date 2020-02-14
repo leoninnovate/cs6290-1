@@ -96,7 +96,7 @@ void BPred::UpdateStats(const InstID id, const bool isHit, StatsForInsts& stats)
 void BPred::PrintStats()
 {
     if(statsForInsts.empty()){
-        printf("\nstatsForInsts empty!\n");
+        printf("statsForInsts empty!\n");
         return;
     }
     
@@ -104,35 +104,39 @@ void BPred::PrintStats()
     StatsForInsts::const_iterator itr = statsForInsts.begin();
     for(;itr != statsForInsts.end(); ++itr){
         if(itr->second->TotalNum() < 10){
+            n10.nStaticInst++;
             n10.nHit  += itr->second->nHit;
             n10.nMiss += itr->second->nMiss;
             n10.nTotal += itr->second->TotalNum();
         }
         else if(itr->second->TotalNum() < 100) {
+            n100.nStaticInst++;
             n100.nHit  += itr->second->nHit;
             n100.nMiss += itr->second->nMiss;
             n100.nTotal += itr->second->TotalNum();
         }
         else if(itr->second->TotalNum() < 1000) {
+            n1000.nStaticInst++;
             n1000.nHit  += itr->second->nHit;
             n1000.nMiss += itr->second->nMiss;
             n1000.nTotal += itr->second->TotalNum();
         }
         else {
+            n1000plus.nStaticInst++;
             n1000plus.nHit  += itr->second->nHit;
             n1000plus.nMiss += itr->second->nMiss;
             n1000plus.nTotal += itr->second->TotalNum();
         }
     }
 
-    printf("Stats for branches that repeated under 10   times: total %lli, hit %lli, miss %lli.\n",
-            n10.nTotal,n10.nHit,n10.nMiss);
-    printf("Stats for branches that repeated under 100  times: total %lli, hit %lli, miss %lli.\n",
-            n100.nTotal,n100.nHit,n100.nMiss);
-    printf("Stats for branches that repeated under 1000 times: total %lli, hit %lli, miss %lli.\n",
-            n1000.nTotal,n1000.nHit,n1000.nMiss);
-    printf("Stats for branches that repeated over  1000 times: total %lli, hit %lli, miss %lli.\n",
-            n1000plus.nTotal,n1000plus.nHit,n1000plus.nMiss);
+    printf("Stats for branches that repeated under 10   times: Static Inst num %lli, total finish %lli, hit %lli, miss %lli.\n",
+            n10.nStaticInst, n10.nTotal, n10.nHit, n10.nMiss);
+    printf("Stats for branches that repeated under 100  times: Static Inst num %lli, total finish %lli, hit %lli, miss %lli.\n",
+            n100.nStaticInst, n100.nTotal,n100.nHit,n100.nMiss);
+    printf("Stats for branches that repeated under 1000 times: Static Inst num %lli, total finish %lli, hit %lli, miss %lli.\n",
+            n1000.nStaticInst, n1000.nTotal,n1000.nHit,n1000.nMiss);
+    printf("Stats for branches that repeated over  1000 times: Static Inst num %lli, total finish %lli, hit %lli, miss %lli.\n",
+            n1000plus.nStaticInst, n1000plus.nTotal,n1000plus.nHit,n1000plus.nMiss);
 }
 
 /*****************************************
