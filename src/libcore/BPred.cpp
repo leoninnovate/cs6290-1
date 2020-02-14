@@ -96,7 +96,7 @@ void BPred::UpdateStats(const InstID id, const bool isHit, StatsForInsts& stats)
 void BPred::PrintStats()
 {
     if(statsForInsts.empty()){
-        printf("statsForInsts empty");
+        printf("\nstatsForInsts empty!\n");
         return;
     }
     
@@ -125,13 +125,13 @@ void BPred::PrintStats()
         }
     }
 
-    printf("\nStats for branches that repeated under 10   times: total %lli, hit %lli, miss %lli.",
+    printf("Stats for branches that repeated under 10   times: total %lli, hit %lli, miss %lli.\n",
             n10.nTotal,n10.nHit,n10.nMiss);
-    printf("\nStats for branches that repeated under 100  times: total %lli, hit %lli, miss %lli.",
+    printf("Stats for branches that repeated under 100  times: total %lli, hit %lli, miss %lli.\n",
             n100.nTotal,n100.nHit,n100.nMiss);
-    printf("\nStats for branches that repeated under 1000 times: total %lli, hit %lli, miss %lli.",
+    printf("Stats for branches that repeated under 1000 times: total %lli, hit %lli, miss %lli.\n",
             n1000.nTotal,n1000.nHit,n1000.nMiss);
-    printf("\nStats for branches that repeated over  1000 times: total %lli, hit %lli, miss %lli.",
+    printf("Stats for branches that repeated over  1000 times: total %lli, hit %lli, miss %lli.\n",
             n1000plus.nTotal,n1000plus.nHit,n1000plus.nMiss);
 }
 
