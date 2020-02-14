@@ -129,13 +129,13 @@ void BPred::PrintStats()
         }
     }
 
-    printf("Stats for branches that repeated under 10   times: Static Inst num %lli, total finish %lli, hit %lli, miss %lli, accuracy %.5f.\n",
+    printf("Stats for branches that repeated under 10   times: Static Inst num %lli, total finish %lli, hit %lli, miss %lli, accuracy %.7f.\n",
             n10.nStaticInst, n10.nTotal, n10.nHit, n10.nMiss, float(n10.nHit)/float(n10.nTotal));
-    printf("Stats for branches that repeated under 100  times: Static Inst num %lli, total finish %lli, hit %lli, miss %lli, accuracy %.5f.\n",
+    printf("Stats for branches that repeated under 100  times: Static Inst num %lli, total finish %lli, hit %lli, miss %lli, accuracy %.7f.\n",
             n100.nStaticInst, n100.nTotal,n100.nHit,n100.nMiss, float(n100.nHit)/float(n100.nTotal));
-    printf("Stats for branches that repeated under 1000 times: Static Inst num %lli, total finish %lli, hit %lli, miss %lli, accuracy %.5f.\n",
+    printf("Stats for branches that repeated under 1000 times: Static Inst num %lli, total finish %lli, hit %lli, miss %lli, accuracy %.7f.\n",
             n1000.nStaticInst, n1000.nTotal,n1000.nHit,n1000.nMiss, float(n1000.nHit)/float(n1000.nTotal));
-    printf("Stats for branches that repeated over  1000 times: Static Inst num %lli, total finish %lli, hit %lli, miss %lli, accuracy %.5f.\n",
+    printf("Stats for branches that repeated over  1000 times: Static Inst num %lli, total finish %lli, hit %lli, miss %lli, accuracy %.7f.\n",
             n1000plus.nStaticInst, n1000plus.nTotal,n1000plus.nHit,n1000plus.nMiss, float(n1000plus.nHit)/float(n1000plus.nTotal));
 }
 
