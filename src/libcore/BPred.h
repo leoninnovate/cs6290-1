@@ -95,9 +95,9 @@ public:
     };
 
     struct OverallStats{
-        long long nHit = 0;
-        long long nMiss= 0;
-        long long nTotal=0;
+        long long nHit;
+        long long nMiss;
+        long long nTotal;
 
         OverallStats():nHit(0),nMiss(0),nTotal(0) {}
     };
