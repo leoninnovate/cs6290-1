@@ -68,8 +68,10 @@ public:
     /************* Haoyu Mod starts ********************/
     //for counting hit and miss of 1 repeating static branch inst
     struct SingleInstStats {
-        long long nHit  =0;
-        long long nMiss = 0;
+        long long nHit;
+        long long nMiss;
+
+        SingleInstStats():nHit(0),nMiss(0) {}
 
         void Update(const bool isHit)
         {
@@ -84,6 +86,7 @@ public:
         SingleInstStats& operator=(const SingleInstStats& rhs){
             nHit = rhs.nHit;
             nMiss = rhs.nMiss;
+            return *this;
         }
 
         long long TotalNum() const {
@@ -95,6 +98,8 @@ public:
         long long nHit = 0;
         long long nMiss= 0;
         long long nTotal=0;
+
+        OverallStats():nHit(0),nMiss(0),nTotal(0) {}
     };
     
     typedef std::map<InstID, SingleInstStats*> StatsForInsts;
