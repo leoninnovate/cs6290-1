@@ -1318,7 +1318,7 @@ BPredictor::~BPredictor()
 {
     dump(section);
 
-    pred->PrintStats();//print to terminal
+    //pred->PrintStats();//print to terminal Proj1
 
     if (!SMTcopy)
         delete pred;
