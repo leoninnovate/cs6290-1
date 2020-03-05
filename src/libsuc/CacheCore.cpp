@@ -427,7 +427,7 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
             ///printf("NXLRU: lineFree is invalid, use it. Treat invalid lines the same as LRU\n");
         } else {///no hit, no invalid. must be unlock exist
             lineFree = lineFreeNX;
-            printf("NXLRU: Use calculated lineFreeNX\n");
+            ///printf("NXLRU: Use calculated lineFreeNX\n");
         }
     }
     // No matter what is the policy, move lineHit to the *theSet. This
