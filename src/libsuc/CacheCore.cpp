@@ -37,6 +37,7 @@ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 #define k_RANDOM     "RANDOM"
 #define k_LRU        "LRU"
+#define k_NXLRU      "NXLRU"
 
 //
 // Class CacheGeneric, the combinational logic of Cache
@@ -230,6 +231,8 @@ CacheAssoc<State, Addr_t, Energy>::CacheAssoc(int32_t size, int32_t assoc, int32
         policy = RANDOM;
     else if (strcasecmp(pStr, k_LRU)    == 0)
         policy = LRU;
+    else if (strcasecmp(pStr, k_NXLRU) == 0)
+        policy = NXLRU;
     else {
         MSG("Invalid cache policy [%s]",pStr);
         exit(0);
@@ -320,7 +323,9 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
 
     Line **lineHit=0;
     Line **lineFree=0; // Order of preference, invalid, locked
+    Line **lineFreeNX=0; ///for NXLRU
     Line **setEnd = theSet + assoc;
+    bool foundInvalid = false;
 
     // Start in reverse order so that get the youngest invalid possible,
     // and the oldest isLocked possible (lineFree)
@@ -331,8 +336,10 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
                 lineHit = l;
                 break;
             }
-            if (!(*l)->isValid())
+            if (!(*l)->isValid()) {
                 lineFree = l;
+                foundInvalid = true;
+            }
             else if (lineFree == 0 && !(*l)->isLocked())
                 lineFree = l;
 
@@ -342,32 +349,56 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
         }
     }
     GI(lineFree, !(*lineFree)->isValid() || !(*lineFree)->isLocked());
+    ///get NXline for NXLRU policy.
+    if(lineHit==0 && foundInvalid==false) {///no hit, no invalid lines
+        Line **l = setEnd -1;
+        int n = 0;
+        while(l >= theSet) {
+            if(!(*l)->isLocked()){
+                ++n;
+                lineFreeNX = l;
+            }
+            if(n == 2)
+                break;
+            l--;
+        }///n==0 means no unlocked line, lineFree will be 0 in this case
+    }
 
-    if (lineHit)
+    if (lineHit)///found hit
         return *lineHit;
 
     I(lineHit==0);
 
-    if(lineFree == 0 && !ignoreLocked)
+    if(lineFree == 0 && !ignoreLocked)///no hit; didnt find invalid, and all are locked && cannot ignore lock
         return 0;
 
-    if (lineFree == 0) {
+    if (lineFree == 0) {///no hit; didnt find invalid, and all are locked. And ignore lock
         I(ignoreLocked);
         if (policy == RANDOM) {
             lineFree = &theSet[irand];
             irand = (irand + 1) & maskAssoc;
-        } else {
+        } else if (policy == LRU) {
             I(policy == LRU);
-            // Get the oldest line possible
+            // Get the oldest line possible///return LRU line
             lineFree = setEnd-1;
+        } else if (policy == NXLRU) {///NXLRU for the "All lines are valid and locked" case
+            lineFree = setEnd-2;
         }
-    } else if(ignoreLocked) {
+    } else if(ignoreLocked) {///no hit; lineFree!=0 means found invalid or unlocked. Do differently for NXLRU
         if (policy == RANDOM && (*lineFree)->isValid()) {
             lineFree = &theSet[irand];
             irand = (irand + 1) & maskAssoc;
-        } else {
+        } else if (policy == LRU) {
             //      I(policy == LRU);
             // Do nothing. lineFree is the oldest
+        } else if (policy == NXLRU) {
+            if(foundInvalid)
+                ///lineFree is invalid, use it. Treat invalid lines the same as LRU
+            else
+            {
+                lineFree = lineFreeNX;
+            }
+            
         }
     }
 
