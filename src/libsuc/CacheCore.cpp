@@ -384,9 +384,10 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
             I(policy == LRU);
             // Get the oldest line possible///return LRU line
             lineFree = setEnd-1;
+            printf("LRU: All lines are valid and locked, And ignore lock\n");
         } else if (policy == NXLRU) {///NXLRU for the "All lines are valid and locked" case
             lineFree = setEnd-2;
-            printf("NXLRU: All lines are valid and locked\n");
+            printf("NXLRU: All lines are valid and locked, And ignore lock\n");
         }
     } else if(ignoreLocked) {///no hit; lineFree!=0 means found invalid or unlocked. Do differently for NXLRU
         if (policy == RANDOM && (*lineFree)->isValid()) {
@@ -395,6 +396,7 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
         } else if (policy == LRU) {
             //      I(policy == LRU);
             // Do nothing. lineFree is the oldest
+            printf("LRU: lineFree is invalid or unlock, use it\n");
         } else if (policy == NXLRU) {
             if(foundInvalid) {
                 ///lineFree is invalid, use it. Treat invalid lines the same as LRU
