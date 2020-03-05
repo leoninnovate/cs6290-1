@@ -375,13 +375,7 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
     I(lineHit==0);
 
     if(lineFree == 0 && !ignoreLocked) {///no hit; didnt find invalid, and all are locked && cannot ignore lock
-	//if(policy == NXLRU) {
-	//    lineFree = setEnd-2;
-        //    printf("NXLRU: All lines are valid and locked, And no ignore lock\n");
-	//} else {
-        //    printf("Not NXLRU: no hit; didnt find invalid, and all are locked && cannot ignore lock\n");
             return 0;
-	//}
     }
 
     if (lineFree == 0) {///no hit; didnt find invalid, and all are locked. And ignore lock
@@ -437,7 +431,7 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
             l = prev;
         }
         *theSet = tmp;
-        printf("LRU?: lineFree is %d\n",int(lineFree));
+        
     }
 
     return tmp;
