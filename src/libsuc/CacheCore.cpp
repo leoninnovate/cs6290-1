@@ -392,8 +392,9 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
             //      I(policy == LRU);
             // Do nothing. lineFree is the oldest
         } else if (policy == NXLRU) {
-            if(foundInvalid)
+            if(foundInvalid) {
                 ///lineFree is invalid, use it. Treat invalid lines the same as LRU
+            }
             else
             {
                 lineFree = lineFreeNX;
