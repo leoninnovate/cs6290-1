@@ -59,6 +59,7 @@ CacheGeneric<State, Addr_t, Energy> *CacheGeneric<State, Addr_t, Energy>::create
     } else {
         // Associative Cache
         cache = new CacheAssoc<State, Addr_t, Energy>(size, assoc, bsize, addrUnit, pStr);
+        printf("Actually creating cache ");printf(pStr);printf("\n");
     }
 
     I(cache);
@@ -191,6 +192,7 @@ CacheGeneric<State, Addr_t, Energy> *CacheGeneric<State, Addr_t, Energy>::create
             SescConf->isInList(section, repl, k_RANDOM, k_LRU, k_NXLRU)) {
 
         cache = create(s, a, b, u, pStr, sk);
+        printf("Creating cache ");printf(pStr);printf("\n");
     } else {
         // this is just to keep the configuration going,
         // sesc will abort before it begins
@@ -384,6 +386,7 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
             lineFree = setEnd-1;
         } else if (policy == NXLRU) {///NXLRU for the "All lines are valid and locked" case
             lineFree = setEnd-2;
+            printf("NXLRU: All lines are valid and locked\n");
         }
     } else if(ignoreLocked) {///no hit; lineFree!=0 means found invalid or unlocked. Do differently for NXLRU
         if (policy == RANDOM && (*lineFree)->isValid()) {
@@ -395,10 +398,12 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
         } else if (policy == NXLRU) {
             if(foundInvalid) {
                 ///lineFree is invalid, use it. Treat invalid lines the same as LRU
+                printf("NXLRU: lineFree is invalid, use it. Treat invalid lines the same as LRU\n");
             }
             else///no hit, no invalid
             {
                 lineFree = lineFreeNX;
+                printf("NXLRU: Use calculated lineFreeNX\n");
             }
             
         }
