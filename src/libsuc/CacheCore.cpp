@@ -358,8 +358,9 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
                 ++n;
                 lineFreeNX = l;
             }
-            if(n == 2)
+            if(n == 2) {
                 break;
+            }
             l--;
         }///n==0 means no unlocked line, lineFree will be 0 in this case
     }
@@ -395,7 +396,7 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
             if(foundInvalid) {
                 ///lineFree is invalid, use it. Treat invalid lines the same as LRU
             }
-            else
+            else///no hit, no invalid
             {
                 lineFree = lineFreeNX;
             }
