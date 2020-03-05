@@ -59,7 +59,7 @@ CacheGeneric<State, Addr_t, Energy> *CacheGeneric<State, Addr_t, Energy>::create
     } else {
         // Associative Cache
         cache = new CacheAssoc<State, Addr_t, Energy>(size, assoc, bsize, addrUnit, pStr);
-        printf("Actually creating cache ");printf(pStr);printf("\n");
+        printf("Actually creating cache %s\n",pStr);
     }
 
     I(cache);
@@ -192,7 +192,7 @@ CacheGeneric<State, Addr_t, Energy> *CacheGeneric<State, Addr_t, Energy>::create
             SescConf->isInList(section, repl, k_RANDOM, k_LRU, k_NXLRU)) {
 
         cache = create(s, a, b, u, pStr, sk);
-        printf("Creating cache ");printf(pStr);printf("\n");
+        printf("Creating cache %s\n",pStr);
     } else {
         // this is just to keep the configuration going,
         // sesc will abort before it begins
