@@ -377,7 +377,7 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
     if(lineFree == 0 && !ignoreLocked) {///no hit; didnt find invalid, and all are locked && cannot ignore lock
             return 0;
     }
-
+/// Dead code for Proj2!!!
     if (lineFree == 0) {///no hit; didnt find invalid, and all are locked. And ignore lock
         I(ignoreLocked);
         if (policy == RANDOM) {
@@ -413,13 +413,23 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
             
         }
     }
-
+///End dead code
     I(lineFree);
     GI(!ignoreLocked, !(*lineFree)->isValid() || !(*lineFree)->isLocked());
 
     if (lineFree == theSet)
-        return *lineFree; // Hit in the first possition
+        return *lineFree; // Hit in the first possition /// lineFree is either invalid, or the only unlocked
 
+    ///Deal with NXLRU for:no hit, lineFree!=0, ignoreLocked==false
+    if (policy == NXLRU) {
+        if(foundInvalid) {
+            ///lineFree is invalid, use it. Treat invalid lines the same as LRU
+            ///printf("NXLRU: lineFree is invalid, use it. Treat invalid lines the same as LRU\n");
+        } else {///no hit, no invalid. must be unlock exist
+            lineFree = lineFreeNX;
+            printf("NXLRU: Use calculated lineFreeNX\n");
+        }
+    }
     // No matter what is the policy, move lineHit to the *theSet. This
     // increases locality
     Line *tmp = *lineFree;
