@@ -437,6 +437,7 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
             l = prev;
         }
         *theSet = tmp;
+        printf("LRU?: lineFree is %d\n",lineFree);
     }
 
     return tmp;
