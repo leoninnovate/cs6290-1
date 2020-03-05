@@ -188,7 +188,7 @@ CacheGeneric<State, Addr_t, Energy> *CacheGeneric<State, Addr_t, Energy>::create
             SescConf->isPower2(section, size) &&
             SescConf->isPower2(section, bsize) &&
             SescConf->isPower2(section, assoc) &&
-            SescConf->isInList(section, repl, k_RANDOM, k_LRU)) {
+            SescConf->isInList(section, repl, k_RANDOM, k_LRU, k_NXLRU)) {
 
         cache = create(s, a, b, u, pStr, sk);
     } else {
