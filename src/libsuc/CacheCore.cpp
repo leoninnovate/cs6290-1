@@ -367,13 +367,17 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
         }///n==0 means no unlocked line, lineFree will be 0 in this case
     }
 
-    if (lineHit)///found hit
+    if (lineHit){///found hit
+        printf("found hit\n");
         return *lineHit;
+    }
 
     I(lineHit==0);
 
-    if(lineFree == 0 && !ignoreLocked)///no hit; didnt find invalid, and all are locked && cannot ignore lock
+    if(lineFree == 0 && !ignoreLocked) {///no hit; didnt find invalid, and all are locked && cannot ignore lock
+        printf("no hit; didnt find invalid, and all are locked && cannot ignore lock\n");
         return 0;
+    }
 
     if (lineFree == 0) {///no hit; didnt find invalid, and all are locked. And ignore lock
         I(ignoreLocked);
