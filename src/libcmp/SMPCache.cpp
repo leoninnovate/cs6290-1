@@ -95,6 +95,15 @@ SMPCache::SMPCache(SMemorySystem *dms, const char *section, const char *name)
     , writeRetry("%s:writeRetry", name)
     , invalDirty("%s:invalDirty", name)
     , allocDirty("%s:allocDirty", name)
+    , compMiss("%s:compMiss", name)
+    , compMissR("%s:compMissRead", name)
+    , compMissW("%s:compMissWrite", name)
+    , capMiss("%s:capMiss", name)
+    , capMissR("%s:capMissRead", name)
+    , capMissW("%s:capMissWrite", name)
+    , confMiss("%s:confMiss", name)
+    , confMissR("%s:confMissRead", name)
+    , confMissW("%s:confMissWrite", name)
 {
     MemObj *lowerLevel = NULL;
     //printf("%d\n", dms->getPID());
@@ -130,6 +139,7 @@ SMPCache::SMPCache(SMemorySystem *dms, const char *section, const char *name)
     }
 
     cache = CacheType::create(section, "", name);
+    cacheFA = CacheType::createFA(section, "", name, "dummyFA");
     I(cache);
 
     const char *prot = SescConf->getCharPtr(section, "protocol");

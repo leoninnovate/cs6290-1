@@ -53,6 +53,7 @@ protected:
 
 
     CacheType *cache;
+    CacheType *cacheFA;///Proj2 part3
 
     PortGeneric *cachePort;
     TimeDelta_t missDelay;
@@ -97,6 +98,17 @@ protected:
 
     GStatsCntr invalDirty;
     GStatsCntr allocDirty;
+
+    //Proj2 stats
+    GStatsCntr compMissR;
+    GStatsCntr compMissW;
+    GStatsCntr compMiss;
+    GStatsCntr capMissR;
+    GStatsCntr capMissW;
+    GStatsCntr capMiss;
+    GStatsCntr confMissR;
+    GStatsCntr confMissW;
+    GStatsCntr confMiss;
 
 #ifdef SESC_ENERGY
     static unsigned cacheID;

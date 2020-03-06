@@ -107,6 +107,7 @@ public:
     // Do not use this interface, use other create
     static CacheGeneric<State, Addr_t, Energy> *create(int32_t size, int32_t assoc, int32_t blksize, int32_t addrUnit, const char *pStr, bool skew);
     static CacheGeneric<State, Addr_t, Energy> *create(const char *section, const char *append, const char *format, ...);
+    static CacheGeneric<State, Addr_t, Energy> *createFA(const char *section, const char *append, const char *format, ...);
     void destroy() {
         delete this;
     }

@@ -219,6 +219,82 @@ CacheGeneric<State, Addr_t, Energy> *CacheGeneric<State, Addr_t, Energy>::create
     return cache;
 }
 
+template<class State, class Addr_t, bool Energy>
+CacheGeneric<State, Addr_t, Energy> *CacheGeneric<State, Addr_t, Energy>::createFA(const char *section, const char *append, const char *format, ...)
+{
+    CacheGeneric *cache=0;
+    char size[STR_BUF_SIZE];
+    char bsize[STR_BUF_SIZE];
+    char addrUnit[STR_BUF_SIZE];
+    char assoc[STR_BUF_SIZE];
+    char repl[STR_BUF_SIZE];
+    char skew[STR_BUF_SIZE];
+
+    snprintf(size ,STR_BUF_SIZE,"%sSize" ,append);
+    snprintf(bsize,STR_BUF_SIZE,"%sBsize",append);
+    snprintf(addrUnit,STR_BUF_SIZE,"%sAddrUnit",append);
+    snprintf(assoc,STR_BUF_SIZE,"%sAssoc",append);
+    snprintf(repl ,STR_BUF_SIZE,"%sReplPolicy",append);
+    snprintf(skew ,STR_BUF_SIZE,"%sSkew",append);
+
+    int32_t s = SescConf->getInt(section, size);
+    int32_t a = SescConf->getInt(section, assoc);
+    int32_t b = SescConf->getInt(section, bsize);
+    bool sk = false;
+    if (SescConf->checkBool(section, skew))
+        sk = SescConf->getBool(section, skew);
+
+    //For now, tolerate caches that don't have this defined.
+    int32_t u;
+    if ( SescConf->checkInt(section,addrUnit) ) {
+        if ( SescConf->isBetween(section, addrUnit, 0, b) &&
+                SescConf->isPower2(section, addrUnit) )
+            u = SescConf->getInt(section,addrUnit);
+        else
+            u = 1;
+    } else {
+        u = 1;
+    }
+
+    const char *pStr = SescConf->getCharPtr(section, repl);
+
+    if(SescConf->isGT(section, size, 0) &&
+            SescConf->isGT(section, bsize, 0) &&
+            SescConf->isGT(section, assoc, 0) &&
+            SescConf->isPower2(section, size) &&
+            SescConf->isPower2(section, bsize) &&
+            SescConf->isPower2(section, assoc) &&
+            SescConf->isInList(section, repl, k_RANDOM, k_LRU, k_NXLRU)) {
+        pStr = k_LRU;
+        a = s/b;
+        cache = create(s, a, b, u, pStr, sk);
+        printf("Creating dummy FA cache size %d, asso %d, bsize %d, repl %s\n",s,a,b,pStr);
+    } else {
+        // this is just to keep the configuration going,
+        // sesc will abort before it begins
+        cache = new CacheAssoc<State, Addr_t, Energy>(2,
+                1,
+                1,
+                1,
+                pStr);
+    }
+
+    I(cache);
+
+    char cacheName[STR_BUF_SIZE];
+    {
+        va_list ap;
+
+        va_start(ap, format);
+        vsprintf(cacheName, format, ap);
+        va_end(ap);
+    }
+
+    cache->createStats(section, cacheName);
+    printf("Dummy FA cache name: %s",cacheName);
+    return cache;
+}
+
 /*********************************************************
  *  CacheAssoc
  *********************************************************/
