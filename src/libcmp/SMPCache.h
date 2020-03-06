@@ -100,15 +100,16 @@ protected:
     GStatsCntr allocDirty;
 
     //Proj2 stats
+    GStatsCntr compMiss;
     GStatsCntr compMissR;
     GStatsCntr compMissW;
-    GStatsCntr compMiss;
+    GStatsCntr capMiss;
     GStatsCntr capMissR;
     GStatsCntr capMissW;
-    GStatsCntr capMiss;
+    GStatsCntr confMiss;
     GStatsCntr confMissR;
     GStatsCntr confMissW;
-    GStatsCntr confMiss;
+    
 
 #ifdef SESC_ENERGY
     static unsigned cacheID;
