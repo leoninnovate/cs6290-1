@@ -30,6 +30,7 @@ Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include "nanassert.h"
 #include "Snippets.h"
 #include "GStats.h"
+#include <unordered_set>
 
 enum    ReplacementPolicy  {LRU, RANDOM, NXLRU};
 
@@ -255,6 +256,30 @@ public:
 
     Addr_t calcAddr4Tag(Addr_t tag)   const {
         return (tag << log2AddrLs);
+    }
+};
+
+class CacheInfinite
+{
+
+private:
+    std::unordered_set<uint32_t> tagSet;
+
+public:
+    /**
+     * arg tag shall be block number.
+     * If tag already exists in infinite cache, return true.
+     * else, put it in cache and return false.
+    */
+    bool checkTag(uint32_t tag)
+    {
+        bool alreadyExist = false;
+        if(tagSet.find(tag)!=tagSet.end())
+            alreadyExist = true;
+        else {
+            tagSet.insert(tag);
+        }
+        return alreadyExist;
     }
 };
 

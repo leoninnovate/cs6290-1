@@ -444,6 +444,9 @@ void SMPCache::doRead(MemRequest *mreq)
     PAddr addr = mreq->getPAddr();
     Line *l = cache->readLine(addr);
 
+    uint32_t tag = cache->calcTag(addr);
+    bool tagSeen = cacheIF.checkTag(tag);///sim dummy infinite cache
+
     if(!((l && l->canBeRead()))) {
         DEBUGPRINT("[%s] read %x miss at %lld\n",getSymbolicName(), addr,  globalClock );
     }
@@ -459,6 +462,9 @@ void SMPCache::doRead(MemRequest *mreq)
 #endif
         outsReq->retire(addr);
         mreq->goUp(hitDelay);
+
+        readLineDummyFA(addr);///proj2 part3
+
         return;
     }
 
@@ -475,6 +481,19 @@ void SMPCache::doRead(MemRequest *mreq)
     GI(l, !l->isLocked());
 
     readMiss.inc();
+    bool isHitFA = readLineDummyFA(addr);
+    if(!tagSeen){
+        compMiss.inc();
+        compMissR.inc();
+    }
+    else if (!isHitFA){
+        capMiss.inc();
+        capMissR.inc();
+    }
+    else{
+        confMiss.inc();
+        confMissR.inc();
+    }
 
 #if (defined TRACK_MPKI)
     DInst *dinst = mreq->getDInst();
@@ -545,6 +564,11 @@ void SMPCache::doWrite(MemRequest *mreq)
     PAddr addr = mreq->getPAddr();
     Line *l = cache->writeLine(addr);
 
+    uint32_t tag = cache->calcTag(addr);
+    bool tagSeen = cacheIF.checkTag(tag);
+
+    Line* ld = cacheFA->writeLine(addr);
+
     if(!(l && l->canBeWritten())) {
         DEBUGPRINT("[%s] write %x (%x) miss at %lld [state %x]\n",
                    getSymbolicName(), addr, calcTag(addr), globalClock, (l?l->getState():-1) );
@@ -558,6 +582,9 @@ void SMPCache::doWrite(MemRequest *mreq)
         protocol->makeDirty(l);
         outsReq->retire(addr);
         mreq->goUp(hitDelay);
+
+        writeLineDummyFA(addr);///proj2 part3
+
         return;
     }
 
@@ -586,6 +613,19 @@ void SMPCache::doWrite(MemRequest *mreq)
     }
 
     writeMiss.inc();
+    bool isHitFA = writeLineDummyFA(addr);
+    if(!tagSeen){
+        compMiss.inc();
+        compMissW.inc();
+    }
+    else if (!isHitFA){
+        capMiss.inc();
+        capMissR.inc();
+    }
+    else{
+        confMiss.inc();
+        confMissR.inc();
+    }
 
 #ifdef SESC_ENERGY
     wrEnergy[1]->inc();
@@ -600,6 +640,31 @@ void SMPCache::doWrite(MemRequest *mreq)
 #endif
 
     sendWrite(mreq);
+}
+
+bool SMPCache::writeLineDummyFA(uint32_t addr)
+{
+    bool isHit = false;
+    Line* l = cacheFA->writeLine(addr);
+    if(l)
+        isHit = true;
+    else
+    {
+        cacheFA->fillLine(addr);
+    }
+    return isHit;
+}
+bool SMPCache::readLineDummyFA(uint32_t addr)
+{
+    bool isHit = false;
+    Line* l = cacheFA->readLine(addr);
+    if(l)
+        isHit = true;
+    else
+    {
+        cacheFA->fillLine(addr);
+    }
+    return isHit;
 }
 
 void SMPCache::sendWrite(MemRequest* mreq)

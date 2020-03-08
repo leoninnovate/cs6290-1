@@ -54,6 +54,7 @@ protected:
 
     CacheType *cache;
     CacheType *cacheFA;///Proj2 part3
+    CacheInfinite cacheIF;///infinite cache
 
     PortGeneric *cachePort;
     TimeDelta_t missDelay;
@@ -287,6 +288,9 @@ public:
     }
     void inclusionCheck(PAddr addr);
 #endif
+
+    bool writeLineDummyFA(uint32_t addr);
+    bool readLineDummyFA(uint32_t addr);
 };
 
 
