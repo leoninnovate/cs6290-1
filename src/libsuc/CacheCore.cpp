@@ -633,7 +633,7 @@ CacheAssoc<State, Addr_t, Energy>::fillLineFA(Addr_t addr)
         lineFree = setEnd - 1;
     }
 
-    *lineFree->setTag(calcTag(addr));
+    (*lineFree)->setTag(calcTag(addr));
 
     // No matter what is the policy, move lineHit to the *theSet. This
     // increases locality
