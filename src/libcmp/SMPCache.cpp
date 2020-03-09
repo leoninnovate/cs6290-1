@@ -447,12 +447,7 @@ void SMPCache::doRead(MemRequest *mreq)
     uint32_t tag = cache->calcTag(addr);
     bool tagSeen = cacheIF.checkTag(tag);///sim dummy infinite cache
 
-    bool isHitFA = false;
-    Line* l_dummyFA = cacheFA->findLine(addr);
-    if(l_dummyFA != 0) isHitFA = true;
-    else{
-        l_dummyFA = cacheFA->findLine2Replace(addr);
-    }
+    bool isHitFA = accessLineDummyFA(addr);
 
     if(!((l && l->canBeRead()))) {
         DEBUGPRINT("[%s] read %x miss at %lld\n",getSymbolicName(), addr,  globalClock );
@@ -571,12 +566,7 @@ void SMPCache::doWrite(MemRequest *mreq)
     uint32_t tag = cache->calcTag(addr);
     bool tagSeen = cacheIF.checkTag(tag);
 
-    bool isHitFA = false;
-    Line* l_dummyFA = cacheFA->findLine(addr);
-    if(l_dummyFA != 0) isHitFA = true;
-    else{
-        l_dummyFA = cacheFA->findLine2Replace(addr);
-    }
+    bool isHitFA = accessLineDummyFA(addr);
 
     if(!(l && l->canBeWritten())) {
         DEBUGPRINT("[%s] write %x (%x) miss at %lld [state %x]\n",
@@ -649,15 +639,21 @@ void SMPCache::doWrite(MemRequest *mreq)
     sendWrite(mreq);
 }
 
-// Line* SMPCache::accessLineDummyFA(uint32_t addr)
-// {
-//     Line* l = cacheFA->findLine(addr);
-//     if(l == 0)
-//     {
-//         l = cacheFA->fillLine(addr);
-//     }
-//     return l;
-// }
+bool SMPCache::accessLineDummyFA(uint32_t addr)
+{
+    bool isHit = false;
+    Line* l = cacheFA->findLine(addr);
+    if(l == 0)
+    {
+        l = cacheFA->fillLine(addr);
+    }
+    else
+    {
+        isHit = true;
+    }
+    
+    return isHit;
+}
 
 
 void SMPCache::sendWrite(MemRequest* mreq)
