@@ -447,7 +447,7 @@ void SMPCache::doRead(MemRequest *mreq)
     uint32_t tag = cache->calcTag(addr);
     bool tagSeen = cacheIF.checkTag(tag);///sim dummy infinite cache
 
-    bool isHitFA = readLineDummyFA(addr);
+    bool isHitFA = accessLineDummyFA(addr);
 
     if(!((l && l->canBeRead()))) {
         DEBUGPRINT("[%s] read %x miss at %lld\n",getSymbolicName(), addr,  globalClock );
@@ -566,7 +566,7 @@ void SMPCache::doWrite(MemRequest *mreq)
     uint32_t tag = cache->calcTag(addr);
     bool tagSeen = cacheIF.checkTag(tag);
 
-    bool isHitFA = writeLineDummyFA(addr);
+    bool isHitFA = accessLineDummyFA(addr);
 
     if(!(l && l->canBeWritten())) {
         DEBUGPRINT("[%s] write %x (%x) miss at %lld [state %x]\n",
