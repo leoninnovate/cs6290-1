@@ -327,8 +327,8 @@ public:
 
     Line *findLine2Replace(Addr_t addr, bool ignoreLocked=false);
 
-    Line* findLineFA(Addr_t addr) override;
-    Line* fillLineFA(Addr_t addr) override;
+    Line* findLineFA(Addr_t addr);
+    Line* fillLineFA(Addr_t addr);
 };
 
 #ifdef SESC_ENERGY
