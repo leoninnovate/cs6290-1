@@ -150,6 +150,9 @@ public:
         return line;
     }
 
+    virtual CacheLine* findLineFA(Addr_t addr)=0;
+    virtual CacheLine* fillLineFA(Addr_t addr)=0;
+
     CacheLine *findLine(Addr_t addr) {
         return findLinePrivate(addr);
     }
@@ -323,6 +326,9 @@ public:
     }
 
     Line *findLine2Replace(Addr_t addr, bool ignoreLocked=false);
+
+    Line* findLineFA(Addr_t addr);
+    Line* fillLineFA(Addr_t addr);
 };
 
 #ifdef SESC_ENERGY

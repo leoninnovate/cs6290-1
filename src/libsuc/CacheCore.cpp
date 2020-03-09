@@ -340,10 +340,10 @@ typename CacheAssoc<State, Addr_t, Energy>::Line *CacheAssoc<State, Addr_t, Ener
     // findLineDebug instead
 
     Line **theSet = &content[calcIndex4Tag(tag)];
-    // if(numLines == assoc){
-    //     theSet = &content[0];
-    //     //printf("findLinePrivate: this is FA, theSet=%d\n",int(theSet));
-    // }
+    if(numLines == assoc){
+        theSet = &content[0];
+        //printf("findLinePrivate: this is FA, theSet=%d\n",int(theSet));
+    }
 
     // Check most typical case
     if ((*theSet)->getTag() == tag) {
@@ -396,10 +396,10 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
 {
     Addr_t tag    = calcTag(addr);
     Line **theSet = &content[calcIndex4Tag(tag)];
-    // if(numLines == assoc){
-    //     theSet = &content[0];
-    //     //printf("findLine2Replace: this is FA, theSet=%d\n",int(theSet));
-    // }
+    if(numLines == assoc){
+        theSet = &content[0];
+        //printf("findLine2Replace: this is FA, theSet=%d\n",int(theSet));
+    }
 
     // Check most typical case
     if ((*theSet)->getTag() == tag) {
@@ -527,6 +527,129 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
         *theSet = tmp;
         
     }
+
+    return tmp;
+}
+
+template<class State, class Addr_t, bool Energy>
+typename CacheAssoc<State, Addr_t, Energy>::Line*
+CacheAssoc<State, Addr_t, Energy>::findLineFA(Addr_t addr)
+{
+    Addr_t tag = calcTag(addr);
+
+    Line **theSet = &content[calcIndex4Tag(tag)];
+    // if(numLines == assoc){
+    //     theSet = &content[0];
+    //     //printf("findLinePrivate: this is FA, theSet=%d\n",int(theSet));
+    // }
+
+    // Check most typical case
+    if ((*theSet)->getTag() == tag) {
+        return *theSet;
+    }
+
+    Line **lineHit=0;
+    Line **setEnd = theSet + assoc;
+
+    // For sure that position 0 is not (short-cut)
+    {
+        Line **l = theSet + 1;
+        while(l < setEnd) {
+            if ((*l)->getTag() == tag) {
+                lineHit = l;
+                break;
+            }
+            l++;
+        }
+    }
+
+    if (lineHit == 0)
+        return 0;
+
+    // No matter what is the policy, move lineHit to the *theSet. This
+    // increases locality
+    Line *tmp = *lineHit;
+    {
+        Line **l = lineHit;
+        while(l > theSet) {
+            Line **prev = l - 1;
+            *l = *prev;;
+            l = prev;
+        }
+        *theSet = tmp;
+    }
+
+    return tmp;
+}
+
+template<class State, class Addr_t, bool Energy>
+typename CacheAssoc<State, Addr_t, Energy>::Line*
+CacheAssoc<State, Addr_t, Energy>::fillLineFA(Addr_t addr)
+{
+    Addr_t tag    = calcTag(addr);
+    Line **theSet = &content[calcIndex4Tag(tag)];
+    // if(numLines == assoc){
+    //     theSet = &content[0];
+    //     //printf("findLine2Replace: this is FA, theSet=%d\n",int(theSet));
+    // }
+
+    // Check most typical case
+    if ((*theSet)->getTag() == tag) {
+        return *theSet;
+    }
+
+    Line **lineHit=0;
+    Line **lineFree=0; // Order of preference, invalid, locked
+    Line **setEnd = theSet + assoc;
+
+    // Start in reverse order so that get the youngest invalid possible,
+    // and the oldest isLocked possible (lineFree)
+    {
+        Line **l = setEnd -1;
+        while(l >= theSet) {
+            if ((*l)->getTag() == tag) {
+                lineHit = l;
+                break;
+            }
+            if (!(*l)->isValid()) {
+                lineFree = l;
+            }
+            else if (lineFree == 0 && !(*l)->isLocked())
+                lineFree = l;
+
+        }
+    }
+
+
+    if (lineHit){///found hit
+        //printf("found hit\n");
+        return *lineHit;
+    }
+
+    if (lineFree == theSet)
+        return *lineFree; // Hit in the first possition /// lineFree is either invalid, or the only unlocked
+
+    if (lineFree == 0){//dummy FA default LRU
+        lineFree = setEnd - 1;
+    }
+
+    // No matter what is the policy, move lineHit to the *theSet. This
+    // increases locality
+    Line *tmp = *lineFree;
+    {
+        Line **l = lineFree;
+        while(l > theSet) {
+            Line **prev = l - 1;
+            *l = *prev;;
+            l = prev;
+        }
+        *theSet = tmp;
+        
+    }
+
+    if(tmp == 0) return tmp;
+
+    tmp->setTag(calcTag(addr));
 
     return tmp;
 }

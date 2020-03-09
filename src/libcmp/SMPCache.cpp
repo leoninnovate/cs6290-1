@@ -638,6 +638,19 @@ void SMPCache::doWrite(MemRequest *mreq)
     sendWrite(mreq);
 }
 
+bool SMPCache::accessLineDummyFA(uint32_t addr)
+{
+    bool isHit = false;
+    Line* l = cacheFA->findLineFA(addr);
+    if(l)
+        isHit = true;
+    else
+    {
+        cacheFA->fillLineFA(addr);
+    }
+    return isHit;
+}
+
 bool SMPCache::writeLineDummyFA(uint32_t addr)
 {
     bool isHit = false;
