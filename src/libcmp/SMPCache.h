@@ -289,7 +289,7 @@ public:
     void inclusionCheck(PAddr addr);
 #endif
 
-    bool accessLineDummyFA(uint32_t addr);
+    Line* accessLineDummyFA(uint32_t addr);
 
 };
 
