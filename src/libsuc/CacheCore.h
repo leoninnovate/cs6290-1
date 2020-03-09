@@ -150,8 +150,8 @@ public:
         return line;
     }
 
-    virtual CacheLine* findLineFA(Addr_t addr) {return 0};
-    virtual CacheLine* fillLineFA(Addr_t addr) {return 0};
+    virtual CacheLine* findLineFA(Addr_t addr) {return 0;};
+    virtual CacheLine* fillLineFA(Addr_t addr) {return 0;};
 
     CacheLine *findLine(Addr_t addr) {
         return findLinePrivate(addr);
