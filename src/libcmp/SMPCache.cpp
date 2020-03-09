@@ -641,12 +641,12 @@ void SMPCache::doWrite(MemRequest *mreq)
 bool SMPCache::accessLineDummyFA(uint32_t addr)
 {
     bool isHit = false;
-    Line* l = cacheFA->findLineFA(addr);
+    Line* l = cacheFA->findLine(addr);
     if(l)
         isHit = true;
     else
     {
-        cacheFA->fillLineFA(addr);
+        cacheFA->fillLine(addr);
     }
     return isHit;
 }
