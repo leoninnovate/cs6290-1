@@ -620,11 +620,11 @@ void SMPCache::doWrite(MemRequest *mreq)
     }
     else if (!isHitFA){
         capMiss.inc();
-        capMissR.inc();
+        capMissW.inc();
     }
     else{
         confMiss.inc();
-        confMissR.inc();
+        confMissW.inc();
     }
 
 #ifdef SESC_ENERGY
