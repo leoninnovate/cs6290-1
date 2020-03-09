@@ -340,6 +340,9 @@ typename CacheAssoc<State, Addr_t, Energy>::Line *CacheAssoc<State, Addr_t, Ener
     // findLineDebug instead
 
     Line **theSet = &content[calcIndex4Tag(tag)];
+    if(size == lineSize*asso){
+        theSet = &content[0];
+    }
 
     // Check most typical case
     if ((*theSet)->getTag() == tag) {
@@ -392,6 +395,9 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
 {
     Addr_t tag    = calcTag(addr);
     Line **theSet = &content[calcIndex4Tag(tag)];
+    if(size == lineSize*asso){
+        theSet = &content[0];
+    }
 
     // Check most typical case
     if ((*theSet)->getTag() == tag) {
