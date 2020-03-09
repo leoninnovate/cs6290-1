@@ -641,7 +641,7 @@ void SMPCache::doWrite(MemRequest *mreq)
 bool SMPCache::writeLineDummyFA(uint32_t addr)
 {
     bool isHit = false;
-    Line* l = cacheFA->writeLine(addr);
+    Line* l = cacheFA->findLine(addr);
     if(l)
         isHit = true;
     else
@@ -653,7 +653,7 @@ bool SMPCache::writeLineDummyFA(uint32_t addr)
 bool SMPCache::readLineDummyFA(uint32_t addr)
 {
     bool isHit = false;
-    Line* l = cacheFA->readLine(addr);
+    Line* l = cacheFA->findLine(addr);
     if(l)
         isHit = true;
     else
