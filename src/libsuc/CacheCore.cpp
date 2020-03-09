@@ -635,7 +635,7 @@ CacheAssoc<State, Addr_t, Energy>::fillLineFA(Addr_t addr)
     }
 
     (*lineFree)->setTag(calcTag(addr));
-    (*lineFree)->changeStateTo(SMP_READABLE_BIT|SMP_WRITEABLE_BIT);
+    (*lineFree)->changeStateTo(0x00100000|0x00200000);
 
     // No matter what is the policy, move lineHit to the *theSet. This
     // increases locality
