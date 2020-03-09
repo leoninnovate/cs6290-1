@@ -611,11 +611,11 @@ CacheAssoc<State, Addr_t, Energy>::fillLineFA(Addr_t addr)
                 lineHit = l;
                 break;
             }
-            // if (!(*l)->isValid()) {
-            //     lineFree = l;
-            // }
-            // else if (lineFree == 0 && !(*l)->isLocked())
-            //     lineFree = l;
+            if (!(*l)->isValid()) {
+                lineFree = l;
+            }
+            else if (lineFree == 0 && !(*l)->isLocked())
+                lineFree = l;
 
         }
     }
