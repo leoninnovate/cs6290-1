@@ -589,7 +589,7 @@ void SMPCache::doWrite(MemRequest *mreq)
         wrEnergy[0]->inc();
 #endif
         protocol->makeDirty(l);
-        protocol->makeDirty(l_dummyFA);
+        //protocol->makeDirty(l_dummyFA);
         outsReq->retire(addr);
         mreq->goUp(hitDelay);
 
