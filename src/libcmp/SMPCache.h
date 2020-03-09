@@ -290,8 +290,7 @@ public:
 #endif
 
     bool accessLineDummyFA(uint32_t addr);
-    bool writeLineDummyFA(uint32_t addr);
-    bool readLineDummyFA(uint32_t addr);
+
 };
 
 
