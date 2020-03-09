@@ -291,7 +291,7 @@ CacheGeneric<State, Addr_t, Energy> *CacheGeneric<State, Addr_t, Energy>::create
     }
 
     cache->createStats(section, cacheName);
-    printf("Dummy FA cache name: %s",cacheName);
+    printf("Dummy FA cache name: %s\n",cacheName);
     return cache;
 }
 
