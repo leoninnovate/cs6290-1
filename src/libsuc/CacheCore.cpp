@@ -342,7 +342,7 @@ typename CacheAssoc<State, Addr_t, Energy>::Line *CacheAssoc<State, Addr_t, Ener
     Line **theSet = &content[calcIndex4Tag(tag)];
     if(numLines == assoc){
         theSet = &content[0];
-        printf("findLinePrivate: this is FA, theSet=%d",int(theSet));
+        //printf("findLinePrivate: this is FA, theSet=%d\n",int(theSet));
     }
 
     // Check most typical case
@@ -398,7 +398,7 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
     Line **theSet = &content[calcIndex4Tag(tag)];
     if(numLines == assoc){
         theSet = &content[0];
-        printf("findLine2Replace: this is FA, theSet=%d",int(theSet));
+        //printf("findLine2Replace: this is FA, theSet=%d\n",int(theSet));
     }
 
     // Check most typical case
