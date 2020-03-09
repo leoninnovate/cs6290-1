@@ -646,7 +646,7 @@ bool SMPCache::accessLineDummyFA(uint32_t addr)
         isHit = true;
     else
     {
-        cacheFA->fillLine(addr);
+        cacheFA->fillLineFA(addr);
     }
     return isHit;
 }
