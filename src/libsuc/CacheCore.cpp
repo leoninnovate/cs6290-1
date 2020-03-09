@@ -268,7 +268,7 @@ CacheGeneric<State, Addr_t, Energy> *CacheGeneric<State, Addr_t, Energy>::create
         pStr = k_LRU;
         a = s/b;
         cache = create(s, a, b, u, pStr, sk);
-        printf("Creating dummy FA cache size %d, asso %d, bsize %d, addrUnit %d, repl %s, log2AddrLs %d\n",s,a,b,u,pStr,getLog2AddrLs());
+        printf("Creating dummy FA cache size %d, asso %d, bsize %d, addrUnit %d, repl %s, log2AddrLs %d\n",s,a,b,u,pStr,cache->getLog2AddrLs());
     } else {
         // this is just to keep the configuration going,
         // sesc will abort before it begins
