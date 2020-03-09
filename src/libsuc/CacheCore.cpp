@@ -483,7 +483,7 @@ typename CacheAssoc<State, Addr_t, Energy>::Line
         } else if (policy == LRU) {
             //      I(policy == LRU);
             // Do nothing. lineFree is the oldest
-            printf("LRU: lineFree is invalid or unlock, use it\n");
+            //printf("LRU: lineFree is invalid or unlock, use it\n");
         } else if (policy == NXLRU) {
             if(foundInvalid) {
                 ///lineFree is invalid, use it. Treat invalid lines the same as LRU
