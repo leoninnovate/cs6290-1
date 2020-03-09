@@ -631,6 +631,7 @@ CacheAssoc<State, Addr_t, Energy>::fillLineFA(Addr_t addr)
 
     if (lineFree == 0){//dummy FA default LRU
         lineFree = setEnd - 1;
+        printf("dummy FA default LRU, lineFree %d\n",int(lineFree-theSet);
     }
 
     (*lineFree)->setTag(calcTag(addr));

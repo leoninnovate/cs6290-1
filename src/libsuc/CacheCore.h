@@ -221,12 +221,12 @@ public:
         return assoc;
     }
     uint32_t  getLog2AddrLs() const {
-        return log2AddrLs;
+        return log2AddrLs;///6 for FA with bsize 64. block offset. line offset
     }
     uint32_t  getLog2Assoc() const  {
         return log2Assoc;
     }
-    uint32_t  getMaskSets() const   {
+    uint32_t  getMaskSets() const   {///always 0 for FA
         return maskSets;
     }
     uint32_t  getNumLines() const   {
@@ -240,10 +240,10 @@ public:
         return (addr >> log2AddrLs);
     }
 
-    uint32_t calcSet4Tag(Addr_t tag)     const {
+    uint32_t calcSet4Tag(Addr_t tag)     const {///always 0 for FA
         return (tag & maskSets);
     }
-    uint32_t calcSet4Addr(Addr_t addr)   const {
+    uint32_t calcSet4Addr(Addr_t addr)   const {///always 0 for FA
         return calcSet4Tag(calcTag(addr));
     }
 
