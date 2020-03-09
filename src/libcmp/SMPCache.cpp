@@ -649,15 +649,15 @@ void SMPCache::doWrite(MemRequest *mreq)
     sendWrite(mreq);
 }
 
-Line* SMPCache::accessLineDummyFA(uint32_t addr)
-{
-    Line* l = cacheFA->findLine(addr);
-    if(l == 0)
-    {
-        l = cacheFA->fillLine(addr);
-    }
-    return l;
-}
+// Line* SMPCache::accessLineDummyFA(uint32_t addr)
+// {
+//     Line* l = cacheFA->findLine(addr);
+//     if(l == 0)
+//     {
+//         l = cacheFA->fillLine(addr);
+//     }
+//     return l;
+// }
 
 
 void SMPCache::sendWrite(MemRequest* mreq)
