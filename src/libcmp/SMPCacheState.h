@@ -53,6 +53,9 @@ protected:
     // JJO
     bool TS;
 public:
+    bool prevValid;
+    uint32_t prevTag;
+
     SMPCacheState()
         : StateGeneric<>() {
         state = SMP_INVALID;
@@ -69,6 +72,12 @@ public:
         // cannot invalidate if line is in transient state,
         // except when this is the end of an invalidate chain
         GI(isLocked(), (state & SMP_TRANS_BIT) && (state & SMP_INV_BIT));
+
+        if(isValid()){
+            prevValid = true;
+            prevTag = getTag();
+        }
+
         clearTag();
         state = SMP_INVALID;
         TS = false;

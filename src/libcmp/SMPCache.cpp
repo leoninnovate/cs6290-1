@@ -104,6 +104,10 @@ SMPCache::SMPCache(SMemorySystem *dms, const char *section, const char *name)
     , confMiss("%s:confMiss", name)
     , confMissR("%s:confMissRead", name)
     , confMissW("%s:confMissWrite", name)
+    , replMissR("%s:replMissRead", name)
+    , replMissW("%s:replMissWrite", name)
+    , coheMissR("%s:coheMissRead", name)
+    , coheMissW("%s:coheMissWrite", name)
 {
     MemObj *lowerLevel = NULL;
     //printf("%d\n", dms->getPID());
@@ -481,17 +485,22 @@ void SMPCache::doRead(MemRequest *mreq)
     GI(l, !l->isLocked());
 
     readMiss.inc();
-    if(!tagSeen){
+    if(l && !(l->isValid()) && l->prevValid && l->prevTag==tag){
+        coheMissR.inc();
+    }
+    else if(!tagSeen){
         compMiss.inc();
         compMissR.inc();
     }
     else if (!isHitFA){
         capMiss.inc();
         capMissR.inc();
+        replMissR.inc();
     }
     else{
         confMiss.inc();
         confMissR.inc();
+        replMissR.inc();
     }
 
 #if (defined TRACK_MPKI)
@@ -612,17 +621,22 @@ void SMPCache::doWrite(MemRequest *mreq)
     }
 
     writeMiss.inc();
-    if(!tagSeen){
+    if(l && !(l->isValid()) && l->prevValid && l->prevTag==tag){
+        coheMissW.inc();
+    }
+    else if(!tagSeen){
         compMiss.inc();
         compMissW.inc();
     }
     else if (!isHitFA){
         capMiss.inc();
         capMissW.inc();
+        replMissW.inc();
     }
     else{
         confMiss.inc();
         confMissW.inc();
+        replMissW.inc();
     }
 
 #ifdef SESC_ENERGY

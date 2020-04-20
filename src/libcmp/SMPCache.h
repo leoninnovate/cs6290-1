@@ -110,6 +110,11 @@ protected:
     GStatsCntr confMiss;
     GStatsCntr confMissR;
     GStatsCntr confMissW;
+
+    GStatsCntr replMissR;
+    GStatsCntr replMissW;
+    GStatsCntr coheMissR;
+    GStatsCntr coheMissW;
     
 
 #ifdef SESC_ENERGY
